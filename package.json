@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Timotheeee/btd6_log_checker#readme",
   "dependencies": {
+    "config.json": "^0.0.4",
     "discord.js": "^14.6.0",
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.0",
