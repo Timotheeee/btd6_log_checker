@@ -47,13 +47,13 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-client.login(token);
 
 const nexus = require("./nexus.js");
 const scanner = require("./scanner.js");
 
 
 nexus.cacheNexusFiles();
+client.login(token);
 
 let log = fs.readFileSync("./nexus_cache/latest.log", "utf-8");
 
@@ -61,3 +61,4 @@ let log = fs.readFileSync("./nexus_cache/latest.log", "utf-8");
 
 //console.log(nexus.nexusList(scanner.parseMods(log)));
 
+nexus.createWhitelist();

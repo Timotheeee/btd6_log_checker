@@ -4,8 +4,125 @@ const fs = require("fs");
 try {
   require.resolve("./config.json");
   var { nexusKey } = require("./config.json");
+  var { githubToken } = require("./config.json");
 } catch (e) {
   var nexusKey = process.env.NEXUSKEY;
+  var githubToken = process.env.GITHUBTOKEN;
+}
+
+async function createWhitelist() {
+  fs.writeFileSync("./nexus_cache/whitelist.txt", "");
+
+  const { Octokit } = require("@octokit/rest");
+  const octokit = new Octokit({
+    auth: githubToken,
+  });
+
+  let btd6mods = await octokit.rest.search.repos({
+    q: "topic:btd6-mod",
+    per_page: 100,
+  });
+
+  let btd6repos = await octokit.rest.search.repos({
+    q: "topic:btd6-mods",
+    per_page: 100,
+  });
+
+  const btd6modders = fetch(
+    `https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/modders.json`
+  ).json();
+
+  for (let item of btd6mods.data.items) {
+    if (
+      btd6modders.forceVerifiedOnly &&
+      !btd6modders.verfied.includes(item.owner.login)
+    ) {
+      console.log("Blocked: " + item.owner.login + " for " + item.name);
+      continue;
+    }
+    let assets;
+    let addedassets = [];
+    let files = [];
+    let releases = await octokit.rest.repos.listReleases({
+      owner: item.owner.login,
+      repo: item.name,
+      per_page: 100,
+    });
+    if (releases.data.length == 0) {
+      let latestcommit = await octokit.request(
+        "GET /repos/{owner}/{repo}/git/refs/heads/{ref}",
+        {
+          owner: item.owner.login,
+          repo: item.name,
+          ref: item.default_branch,
+        }
+      );
+
+      let object = await octokit.rest.git.getCommit({
+        owner: item.owner.login,
+        repo: item.name,
+        commit_sha: latestcommit.data.object.sha,
+      });
+      let tree = await octokit.request(
+        "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+        {
+          owner: item.owner.login,
+          repo: item.name,
+          tree_sha: object.data.tree.sha,
+        }
+      );
+      for (let file of tree.data.tree) {
+        if (file.type == "blob") {
+          if (!file.path.endsWith(".dll")) {
+            continue;
+          }
+          if (!addedassets.includes(file.path)) {
+            fs.appendFileSync(`./nexus_cache/whitelist.txt`, file.path + "\n");
+            addedassets.push(file.path);
+          }
+        } else if (file.type == "tree") {
+          let subtrees = await octokit.request(
+            "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+            {
+              owner: item.owner.login,
+              repo: item.name,
+              tree_sha: file.sha,
+            }
+          );
+          for (let subtree of subtrees.data.tree) {
+            if (!subtree.path.endsWith(".dll")) {
+              continue;
+            }
+            if (!addedassets.includes(subtree.path)) {
+              fs.appendFileSync(
+                `./nexus_cache/whitelist.txt`,
+                subtree.path + "\n"
+              );
+              addedassets.push(subtree.path);
+            }
+          }
+        }
+      }
+    }
+
+    for (let release of releases.data) {
+      assets = await octokit.rest.repos.listReleaseAssets({
+        owner: item.owner.login,
+        repo: item.name,
+        per_page: 100,
+        release_id: release.id,
+      });
+      for (let asset of assets.data) {
+        if (!asset.name.endsWith(".dll")) {
+          continue;
+        }
+        if (!addedassets.includes(asset.name)) {
+          fs.appendFileSync(`./nexus_cache/whitelist.txt`, asset.name + "\n");
+          addedassets.push(asset.name);
+        }
+      }
+    }
+  }
 }
 
 function cacheNexusFiles() {
@@ -72,9 +189,12 @@ function nexusList(mods) {
   const badmods = [];
   let text = fs.readFileSync("./nexus_cache/filecache.txt", "utf-8");
   let textByLine = text.split("\n");
+  let whitelist = fs.readFileSync("./nexus_cache/whitelist.txt", "utf-8");
+  let whitelistByLine = whitelist.split("\n");
+
   for (let element of mods) {
-    let element1 = element.replace(/ \(\d\)/,"");
-    if (textByLine.includes(element1)) {
+    let element1 = element.replace(/ \(\d\)/, "");
+    if (textByLine.includes(element1) && !whitelistByLine.includes(element1)) {
       badmods.push(element);
     }
   }
@@ -91,4 +211,4 @@ function isInModCache(item) {
   return result;
 }
 
-module.exports = { nexusList, cacheNexusFiles, isInModCache };
+module.exports = { nexusList, cacheNexusFiles, isInModCache, createWhitelist };
