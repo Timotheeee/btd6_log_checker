@@ -61,4 +61,5 @@ let log = fs.readFileSync("./nexus_cache/latest.log", "utf-8");
 
 //console.log(nexus.nexusList(scanner.parseMods(log)));
 
-nexus.createWhitelist();
+nexus.createWhitelist().then((whitelist) => {
+  console.log("Successfully created whitelist!")});

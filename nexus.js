@@ -9,28 +9,48 @@ try {
   var nexusKey = process.env.NEXUSKEY;
   var githubToken = process.env.GITHUBTOKEN;
 }
+const { Octokit } = require("@octokit/rest");
+const octokit = new Octokit({
+  auth: githubToken,
+});
+var dlls = [];
+function addtowhitelist(item) {
+    if (!dlls.includes(item) && item.endsWith(".dll")) {
+      dlls.push(item);
+    }
+  }
+async function searchtrees(tree, mod) {
+    for (let item of tree) {
+    if (item.type == "tree") {
+      let trees = await octokit.request(
+        "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+        {
+          owner: mod.owner.login,
+          repo: mod.name,
+          tree_sha: item.sha,
+        }
+      );
 
-async function createWhitelist() {
-  fs.writeFileSync("./nexus_cache/whitelist.txt", "");
+      console.log(
+        "recursively searching " +
+          JSON.stringify(item.path) +
+          " by " +
+          mod.owner.login +
+          " for dlls"
+      );
+      searchtrees(trees.data.tree, mod);
+    }
+    if (item.type == "blob") {
+      addtowhitelist(item.path);
+    }
+  }
+}
 
-  const { Octokit } = require("@octokit/rest");
-  const octokit = new Octokit({
-    auth: githubToken,
-  });
-
-  let btd6mods = await octokit.rest.search.repos({
+async function btd6mod(btd6modders) {
+    let btd6mods = await octokit.rest.search.repos({
     q: "topic:btd6-mod",
     per_page: 100,
   });
-
-  let btd6repos = await octokit.rest.search.repos({
-    q: "topic:btd6-mods",
-    per_page: 100,
-  });
-
-  const btd6modders = fetch(
-    `https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/modders.json`
-  ).json();
 
   for (let item of btd6mods.data.items) {
     if (
@@ -41,13 +61,12 @@ async function createWhitelist() {
       continue;
     }
     let assets;
-    let addedassets = [];
-    let files = [];
     let releases = await octokit.rest.repos.listReleases({
       owner: item.owner.login,
       repo: item.name,
       per_page: 100,
     });
+
     if (releases.data.length == 0) {
       let latestcommit = await octokit.request(
         "GET /repos/{owner}/{repo}/git/refs/heads/{ref}",
@@ -57,7 +76,6 @@ async function createWhitelist() {
           ref: item.default_branch,
         }
       );
-
       let object = await octokit.rest.git.getCommit({
         owner: item.owner.login,
         repo: item.name,
@@ -71,40 +89,8 @@ async function createWhitelist() {
           tree_sha: object.data.tree.sha,
         }
       );
-      for (let file of tree.data.tree) {
-        if (file.type == "blob") {
-          if (!file.path.endsWith(".dll")) {
-            continue;
-          }
-          if (!addedassets.includes(file.path)) {
-            fs.appendFileSync(`./nexus_cache/whitelist.txt`, file.path + "\n");
-            addedassets.push(file.path);
-          }
-        } else if (file.type == "tree") {
-          let subtrees = await octokit.request(
-            "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
-            {
-              owner: item.owner.login,
-              repo: item.name,
-              tree_sha: file.sha,
-            }
-          );
-          for (let subtree of subtrees.data.tree) {
-            if (!subtree.path.endsWith(".dll")) {
-              continue;
-            }
-            if (!addedassets.includes(subtree.path)) {
-              fs.appendFileSync(
-                `./nexus_cache/whitelist.txt`,
-                subtree.path + "\n"
-              );
-              addedassets.push(subtree.path);
-            }
-          }
-        }
-      }
+      await searchtrees(tree.data.tree, item);
     }
-
     for (let release of releases.data) {
       assets = await octokit.rest.repos.listReleaseAssets({
         owner: item.owner.login,
@@ -113,15 +99,85 @@ async function createWhitelist() {
         release_id: release.id,
       });
       for (let asset of assets.data) {
-        if (!asset.name.endsWith(".dll")) {
-          continue;
-        }
-        if (!addedassets.includes(asset.name)) {
-          fs.appendFileSync(`./nexus_cache/whitelist.txt`, asset.name + "\n");
-          addedassets.push(asset.name);
-        }
+        addtowhitelist(asset.name);
       }
     }
+  }
+}
+async function btd6mods(btd6modders) {
+  function addtowhitelist(item) {
+    if (!dlls.includes(item) && item.endsWith(".dll")) {
+      dlls.push(item);
+    }
+  }
+  let btd6mods = await octokit.rest.search.repos({
+    q: "topic:btd6-mods",
+    per_page: 100,
+  });
+
+  for (let item of btd6mods.data.items) {
+    if (
+      btd6modders.forceVerifiedOnly &&
+      !btd6modders.verfied.includes(item.owner.login)
+    ) {
+      console.log("Blocked: " + item.owner.login + " for " + item.name);
+      continue;
+    }
+    let assets;
+    let releases = await octokit.rest.repos.listReleases({
+      owner: item.owner.login,
+      repo: item.name,
+      per_page: 100,
+    });
+
+    if (releases.data.length == 0) {
+      let latestcommit = await octokit.request(
+        "GET /repos/{owner}/{repo}/git/refs/heads/{ref}",
+        {
+          owner: item.owner.login,
+          repo: item.name,
+          ref: item.default_branch,
+        }
+      );
+      let object = await octokit.rest.git.getCommit({
+        owner: item.owner.login,
+        repo: item.name,
+        commit_sha: latestcommit.data.object.sha,
+      });
+      let tree = await octokit.request(
+        "GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+        {
+          owner: item.owner.login,
+          repo: item.name,
+          tree_sha: object.data.tree.sha,
+        }
+      );
+      await searchtrees(tree.data.tree, item);
+    }
+    for (let release of releases.data) {
+      assets = await octokit.rest.repos.listReleaseAssets({
+        owner: item.owner.login,
+        repo: item.name,
+        per_page: 100,
+        release_id: release.id,
+      });
+      for (let asset of assets.data) {
+        addtowhitelist(asset.name);
+      }
+    }
+  }
+}
+
+async function createWhitelist() {
+  fs.writeFileSync("./nexus_cache/whitelist.txt", "");
+  const btd6modders = fetch(
+    `https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/modders.json`
+  ).json();
+  await btd6mod(btd6modders);
+  await btd6mods(btd6modders);
+
+  for (let item of dlls) {
+    fs.appendFileSync("./nexus_cache/whitelist.txt", item + "\n");
   }
 }
 
@@ -134,7 +190,7 @@ function cacheNexusFiles() {
     return fs.readFileSync(filePath).toString().split("\n").length;
   }
 
-  console.log("File Lines: " + countFileLines("./nexus_cache/filecache.txt"));
+  //console.log("File Lines: " + countFileLines("./nexus_cache/filecache.txt"));
 
   for (let i = countFileLines("./nexus_cache/filecache.txt"); ; i++) {
     console.log(
