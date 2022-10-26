@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+/*const { SlashCommandBuilder } = require('discord.js');
 
 try {
     require.resolve('../config.json');
@@ -15,3 +15,4 @@ module.exports = {
         await interaction.reply({content:inviteLink, ephemeral: true});
     },
 };
+*/
