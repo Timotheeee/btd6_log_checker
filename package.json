@@ -17,8 +17,12 @@
   },
   "homepage": "https://github.com/Timotheeee/btd6_log_checker#readme",
   "dependencies": {
+<<<<<<< HEAD
     "@octokit/rest": "^19.0.5",
     "cors": "^2.8.5",
+=======
+    "config.json": "^0.0.4",
+>>>>>>> 341c8008ca4fceb15a27e085895515ba2a06603a
     "discord.js": "^14.6.0",
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.0",
