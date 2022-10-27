@@ -60,7 +60,5 @@ nexus.cacheNexusFiles();
 
 //console.log(nexus.nexusList(scanner.parseMods(log)));
 
-nexus.createWhitelist().then((whitelist) => {
-  console.log("Successfully created whitelist!");
+//nexus.createWhitelist().then((whitelist) => {console.log("Successfully created whitelist!");});
     client.login(token);
-});

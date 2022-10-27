@@ -4,10 +4,14 @@ function hasNumber(myString) {
   }
 function scanLog(log, net6 = false) {
   let body = log;
-  let resp = "**Major Issues Found:**\n";
+  let resp = "";
+  resp+="**Major Issues Found:**\n";
   const mods = parseMods(log);
+  console.log(mods);
 
   const badmods = nexus.nexusList(mods);
+  console.log(badmods);
+
   if (badmods.length > 0) {
     resp +=
       "**Nexus mods detected: **\n- " +

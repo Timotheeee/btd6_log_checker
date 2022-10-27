@@ -242,15 +242,15 @@ function cacheNexusFiles() {
 }
 
 function nexusList(mods) {
-  const badmods = [];
   let text = fs.readFileSync("./nexus_cache/filecache.txt", "utf-8");
-  let textByLine = text.split("\n");
   let whitelist = fs.readFileSync("./nexus_cache/whitelist.txt", "utf-8");
-  let whitelistByLine = whitelist.split("\n");
+  let badmods = [];
 
   for (let element of mods) {
     let element1 = element.replace(/ \(\d\)/, "");
-    if (textByLine.includes(element1) && !whitelistByLine.includes(element1)) {
+    console.log(!whitelist.includes(element1));
+
+    if (text.includes(element1) && (!whitelist.includes(element1))) {
       badmods.push(element);
     }
   }
