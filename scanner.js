@@ -16,7 +16,7 @@ function scanLog(log, net6 = false) {
     resp +=
       "**Nexus mods detected: **\n- " +
       badmods.join("\n- ") +
-      "\n**These mods are not allowed on this server. DM @GrahamKracker#6379 with your log if there are any false detections**\n";
+      "\n**These mods are not allowed on this server because they are all either stolen, viruses, or cheat mods. DM @GrahamKracker#6379 with your log if there are any false detections**\n";
   }
   else {resp = "";}
   if(body.includes("NKHook6")){resp+="NKHook6 and all the mods that rely on it are broken\n";}

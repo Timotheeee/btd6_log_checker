@@ -49,6 +49,7 @@ for (const file of commandFiles) {
 
 
 const nexus = require("./nexus.js");
+const github=require("./github.js");
 const scanner = require("./scanner.js");
 
 
@@ -60,7 +61,6 @@ nexus.cacheNexusFiles();
 
 //console.log(nexus.nexusList(scanner.parseMods(log)));
 
-nexus.createWhitelist().then((whitelist) => {console.log("Successfully created whitelist!");
-client.login(token);
-});
+github.createWhitelist().then((whitelist) => {console.log("Successfully created whitelist!");});
 
+client.login(token);

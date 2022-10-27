@@ -11,6 +11,7 @@ module.exports =
 
     
     const attachment = message.attachments.first();
+    if (!attachment) return;
     const file = attachment?.url;       
       
     let response;
