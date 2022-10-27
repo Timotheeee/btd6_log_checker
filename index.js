@@ -17,8 +17,8 @@ try {
   var { token } = require("./config.json");
   var { nexusKey } = require("./config.json");
 } catch (e) {
-  var token = process.env.TOKEN;
-  var nexusKey = process.env.NEXUSKEY;
+  var token = process.env.token;
+  var nexusKey = process.env.nexusKey;
 }
 
 const eventsPath = path.join(__dirname, "events");
