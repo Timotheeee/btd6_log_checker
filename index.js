@@ -53,13 +53,14 @@ const scanner = require("./scanner.js");
 
 
 nexus.cacheNexusFiles();
-client.login(token);
 
-let log = fs.readFileSync("./nexus_cache/latest.log", "utf-8");
+//let log = fs.readFileSync("./nexus_cache/latest.log", "utf-8");
 
 //console.log(scanner.parseMods(log));
 
 //console.log(nexus.nexusList(scanner.parseMods(log)));
 
 nexus.createWhitelist().then((whitelist) => {
-  console.log("Successfully created whitelist!")});
+  console.log("Successfully created whitelist!");
+    client.login(token);
+});
