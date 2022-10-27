@@ -1,0 +1,25 @@
+{
+  "name": "btd6_log_checker",
+  "version": "1.0.0",
+  "description": "a simple discord bot to check btd6 melonloader logs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Timotheeee/btd6_log_checker.git"
+  },
+  "author": "Timotheeee and GrahamKracker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Timotheeee/btd6_log_checker/issues"
+  },
+  "homepage": "https://github.com/Timotheeee/btd6_log_checker#readme",
+  "dependencies": {
+    "@octokit/rest": "^19.0.5",
+    "discord.js": "^14.6.0",
+    "sync-fetch": "^0.4.2"
+  }
+}
+
