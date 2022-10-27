@@ -3,7 +3,7 @@ try {
     var { clientId, token } = require('./config.json');
 } catch(e) {
     var token = process.env.TOKEN;  
-    var clientId = process.env.CLIENTID;
+    var clientId = process.env.clientId;
 }
 const { REST, Routes } = require('discord.js');
 

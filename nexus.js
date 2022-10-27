@@ -5,7 +5,7 @@ try {
 	require.resolve("./config.json");
 	var { nexusKey } = require("./config.json");
 } catch (e) {
-	var nexusKey = process.env.NEXUSKEY;
+	var nexusKey = process.env.nexusKey;
 }
 
 function cacheNexusFiles() {
