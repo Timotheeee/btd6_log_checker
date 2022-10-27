@@ -233,7 +233,7 @@ function cacheNexusFiles() {
 
       function myFunction(item, index, arr) {
         fs.appendFileSync(`./nexus_cache/filecache.txt`, arr[index].path);
-        console.log(arr[index].path);
+        //console.log(arr[index].path);
       }
 
       fs.appendFileSync(`./nexus_cache/filecache.txt`, "\n");

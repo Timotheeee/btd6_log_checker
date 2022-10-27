@@ -28,9 +28,12 @@ module.exports =
     {
       const result = scanner.scanLog(text, scanner.isNet6(text));
 
-      message.reply({content: result});
+      if (result != "")
+      {
+        message.reply({content: result});
+    
       //message.reply({embeds: result});
-      
+    }
 
     }
 
