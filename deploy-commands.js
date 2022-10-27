@@ -1,8 +1,8 @@
 const { REST, Routes } = require('discord.js');
 const fs = require('node:fs');
 try {
-          require.resolve('config.json');
-    var { clientId, token } = require('config.json');
+          require.resolve('./config.json');
+    var { clientId, token } = require('./config.json');
 } catch(e) {
     var token = process.env.TOKEN;  
     var clientId = process.env.CLIENTID;
@@ -13,7 +13,7 @@ const commandFiles = fs.readdirSync('commands').filter(file => file.endsWith('.j
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-    const command = require(`commands/${file}`);
+    const command = require(`./commands/${file}`);
     commands.push(command.data.toJSON());
 }
 
@@ -27,7 +27,7 @@ const rest = new REST({ version: '10' }).setToken(token);
 
         // The put method is used to fully refresh all commands in the guild with the current set
         const data = await rest.put(
-            Routes.applicationCommands(clientId),
+            Routes.applicationCommands(clientId,token),
             { body: commands },
         );
 
