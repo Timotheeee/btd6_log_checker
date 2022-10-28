@@ -1,3 +1,4 @@
+const fs = require("fs");
 const nexus = require("./nexus.js");
 function hasNumber(myString) {
   return /\(\d\)/.test(myString);
@@ -18,6 +19,12 @@ function scanLog(log, net6 = false) {
       badmods.join("\n- ") +
       "\n**Do not get mods from Nexus. Most of the mods there are outdated/broken/stolen. Remove those mods and try again. \nDM @GrahamKracker#6379 with your log if there are any false detections, as this bot is still in alpha**\n\n";
   }
+  const brokenMods = getbrokenMods(mods);
+  if (brokenMods.length > 0) {
+    resp +=
+      "**Broken mods detected: **\n- " + badmods.join("\n- ") + "\n**These mods are currently in the list of broken mods. If you are receiving errors, remove these mods and try again.**\n\n";
+  }
+
   if (body.includes("Bloons Mod Manager")) { resp +="- Do not use the mod manager. Read this: https://hemisemidemipresent.github.io/btd6-modding-tutorial\n"; }
   if (body.includes("BloonsTD6 Mod Helper v2.3.1")) { resp +="- You got the mod helper from the nexus. That version is completely outdated, get the new one here: https://github.com/gurrenm3/BTD-Mod-Helper/releases/latest/download/Btd6ModHelper.dll\n"; }
   if (body.includes("get_display")) { resp +="- A lot of custom tower mods broke in a recent BTD6 update. Remove the ones that are giving errors.\n"; }
@@ -71,13 +78,26 @@ function parseMods(log, net6) {
 
   return mods;
 }
+function getbrokenMods(mods) {
 
+  let brokenMods = [];
+    if (!fs.existsSync("./nexus_cache/broken.txt")) {
+      fs.writeFileSync("./nexus_cache/broken.txt", "");
+    }
+    let broken = fs.readFileSync("./nexus_cache/broken.txt", "utf-8");
+    let brokenByLine = broken.split("\n");
+    mods.forEach((l) => {
+      if (brokenByLine.includes(l)) {
+        brokenMods.push(l);
+      }
+    });
+    return brokenMods;
+}
 function isLog(log) {
   if (
     log.includes("Game Name: BloonsTD6") &&
     log.includes("MelonLoader") &&
     log.includes("BloonsTD6") &&
-    log.includes("Steam") &&
     log.includes("Game Developer: Ninja Kiwi")
   ) {
     return true;
