@@ -164,9 +164,49 @@ async function createWhitelist() {
 	).json();
 	await btd6mod(btd6modders);
 	await btd6mods(btd6modders);
+	await addmodstowhitelist();
 	fs.writeFileSync("./nexus_cache/whitelist.txt", "");
+
+
 	for (let item of dlls) {
 		fs.appendFileSync("./nexus_cache/whitelist.txt", item + "\n");
+	}
+
+}
+async function addmodstowhitelist() {
+	let latestcommit = await octokit.request(
+		"GET /repos/{owner}/{repo}/git/refs/heads/{ref}",
+		{
+			owner: "DatJaneDoe",
+			repo: "BTD6-Mods",
+			ref: "main",
+		}
+	);
+	let object = await octokit.rest.git.getCommit({
+		owner: "DatJaneDoe",
+		repo: "BTD6-Mods",
+		commit_sha: latestcommit.data.object.sha,
+	});
+	let tree = await octokit.request(
+		"GET /repos/{owner}/{repo}/git/trees/{tree_sha}",
+		{
+			owner: "DatJaneDoe",
+			repo: "BTD6-Mods",
+			tree_sha: object.data.tree.sha,
+		}
+	);
+	for (let item of tree.data.tree) {
+		if (item.type == "blob") {
+			addtowhitelist(item.path);
+		}
+	}
+	if (!fs.existsSync("./nexus_cache/manual.txt")) {
+		fs.writeFileSync("./nexus_cache/manual.txt", "");
+	}
+	let manual = fs.readFileSync("./nexus_cache/manual.txt", "utf-8");
+	let manualarray = manual.split("\n");
+	for (let item of manualarray) {
+		addtowhitelist(item);
 	}
 }
 module.exports = { createWhitelist };
