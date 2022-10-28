@@ -22,7 +22,7 @@ function scanLog(log, net6 = false) {
   const brokenMods = getbrokenMods(mods);
   if (brokenMods.length > 0) {
     resp +=
-      "**Broken mods detected: **\n- " + badmods.join("\n- ") + "\n**These mods are currently in the list of broken mods. If you are receiving errors, remove these mods and try again.**\n\n";
+      "**Broken mods detected: **\n- " + brokenMods.join("\n- ") + "\n**These mods are currently in the list of broken mods. If you are receiving errors, remove these mods and try again.**\n\n";
   }
 
   if (body.includes("Bloons Mod Manager")) { resp +="- Do not use the mod manager. Read this: https://hemisemidemipresent.github.io/btd6-modding-tutorial\n"; }
