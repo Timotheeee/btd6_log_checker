@@ -4,7 +4,7 @@ try {
           require.resolve('./config.json');
     var { clientId, token } = require('./config.json');
 } catch(e) {
-    var token = process.env.TOKEN;  
+    var token = process.env.token;  
     var clientId = process.env.clientId;
 }
 const commands = [];

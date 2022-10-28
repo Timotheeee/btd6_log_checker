@@ -2,7 +2,7 @@ try {
 	require.resolve("./config.json");
 	var { githubToken } = require("./config.json");
 } catch (e) {
-	var githubToken = process.env.GITHUBTOKEN;
+	var githubToken = process.env.githubToken;
 }
 const fetch = require("sync-fetch");
 const fs = require("fs");
