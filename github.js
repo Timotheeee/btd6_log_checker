@@ -43,10 +43,10 @@ async function btd6mod(btd6modders) {
 	});
 
 	for (let item of btd6mods.data.items) {
-		if (
-			btd6modders.forceVerifiedOnly &&
-			!btd6modders.verfied.includes(item.owner.login)
-		) {
+		if (btd6modders.banned.includes(item.name.login)||
+			(btd6modders.forceVerifiedOnly && !btd6modders.verified.includes(item.owner.login))
+		) 
+		{
 			console.log("Blocked: " + item.owner.login + " for " + item.name);
 			continue;
 		}
@@ -162,8 +162,10 @@ async function createWhitelist() {
 	const btd6modders = fetch(
 		`https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/modders.json`
 	).json();
+	
 	await btd6mod(btd6modders);
 	await btd6mods(btd6modders);
+
 	await addmodstowhitelist();
 	fs.writeFileSync("./nexus_cache/whitelist.txt", "");
 

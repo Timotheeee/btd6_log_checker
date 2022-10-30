@@ -20,12 +20,16 @@ module.exports = {
 		const text = await response.text();
 
 		if (text && scanner.isLog(text)) {
-			const result = scanner.scanLog(text, scanner.isNet6(text));
-
+			const result = scanner.scanLog(text, scanner.isNet6(text));	
+			let date = new Date(Date.now()).toLocaleString();
 			if (result != "") {
 				message.reply({ content: result });
-				console.log("Returned Scanned Results");
+				
+				console.log(`Returned Scanned Results at ${date}`);
 				//message.reply({embeds: result});
+			}
+			else{
+				console.log(`Detected log sent at ${date}`);
 			}
 		}
 	},
