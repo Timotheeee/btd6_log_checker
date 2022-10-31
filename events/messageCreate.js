@@ -25,11 +25,11 @@ module.exports = {
 			if (result != "") {
 				message.reply({ content: result });
 				
-				console.log(`Returned Scanned Results at ${date}`);
+				console.log(`Returned Scanned Results at ${date} in channel: ${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`);
 				//message.reply({embeds: result});
 			}
 			else{
-				console.log(`Detected log sent at ${date}`);
+				console.log(`Detected log sent at ${date} in channel: ${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`);
 			}
 		}
 	},
