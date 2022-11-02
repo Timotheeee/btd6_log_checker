@@ -41,8 +41,7 @@ function scanLog(log, net6) {
   if (body.includes("Could not load file or assembly") && !body.includes("6.0.0.0") && !body.includes("PresentationFramework")) { resp +="- Your antivirus deleted a melonloader file. Reinstall melonloader and add an exception to your antivirus. Make sure to delete the existing Melonloader files first.\n"; }
   if ((body.includes("Could not resolve type with token") || body.includes("[ERROR] No Support Module Loaded!") || body.includes("NinjaKiwi.CT.API.dll") || body.includes("Critical failure when loading resources for mod BloonsTD6 Mod Helper")) && !body.includes("Monkeys for Hire") && !body.includes("2.3.1") && !body.includes("[Il2CppAssemblyGenerator] Moving NinjaKiwi.CT.API.dll")) { resp +="- Reinstall melonloader using the official installer: https://github.com/LavaGang/MelonLoader.Installer/releases/latest/download/MelonLoader.Installer.exe (Make sure to delete the existing Melonloader files first).\n"; }
   if (body.includes("[ERROR] System.ComponentModel.Win32Exception")){ resp +="- Reinstall melonloader using the official installer: https://github.com/LavaGang/MelonLoader.Installer/releases/latest/download/MelonLoader.Installer.exe (Make sure to delete the existing Melonloader files first).\n"; }
-  
-  if (resp == "" && body.includes("System.MissingMethodException")) { resp +="- A mod is trying to use a function that no longer exists. Remove that mod and/or check for a new version\n"; }
+  if ( body.includes("System.MissingMethodException")) { resp +="- A mod is trying to use a function that no longer exists. Remove that mod and/or check for a new version\n"; }
   
   
   if (resp == "**Major Issues Found:**\n") { resp = ""; }
