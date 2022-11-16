@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("node:path");
-const keepAlive = require("./server.js");
 
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 
@@ -44,7 +43,6 @@ nexus.cacheNexusFiles();
 //client.on('debug', console.log);
 
 async function Start() {
-	await keepAlive();
 	await client.login(token).then(() => {
 		console.log("client.login succeeded");
 	});
