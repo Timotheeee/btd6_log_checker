@@ -59,7 +59,7 @@ Multicash.dll
 BTD6CaveMonkeyInShop.dll
 SetYourRound.dll
 BTD6TechBotInShop.dll
-
+Unlock Small Bloons.dll
 
 BananaFarmerInShop.dll
 
@@ -403,3 +403,7 @@ Germany.dll
 
 
 BloonsTD6.CT
+BTD6 All Trophy Store Items Unlocker.dll
+BTD6 Infinite Monkey Money.dll
+Expensive.dll
+

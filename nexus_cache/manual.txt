@@ -30,3 +30,6 @@ AllOneBloonDisplay.dll
 CandyShooter.dll
 Monkeyminer.dll
 Helpful.Additions.dll
+MusicMonkey.dll
+DiscordPeople.dll
+RaceButton.dll
