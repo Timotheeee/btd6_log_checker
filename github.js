@@ -205,10 +205,5 @@ async function addmodstowhitelist() {
 	if (!fs.existsSync("./nexus_cache/manual.txt")) {
 		fs.writeFileSync("./nexus_cache/manual.txt", "");
 	}
-	let manual = fs.readFileSync("./nexus_cache/manual.txt", "utf-8");
-	let manualarray = manual.split("\n");
-	for (let item of manualarray) {
-		addtowhitelist(item);
-	}
 }
 module.exports = { createWhitelist };
