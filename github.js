@@ -167,11 +167,11 @@ async function createWhitelist() {
 	await btd6mods(btd6modders);
 
 	await addmodstowhitelist();
-	fs.writeFileSync("./nexus_cache/whitelist.txt", "");
+	fs.writeFileSync("./ScannerFiles/githubwhitelist.txt", "");
 
 
 	for (let item of dlls) {
-		fs.appendFileSync("./nexus_cache/whitelist.txt", item + "\n");
+		fs.appendFileSync("./ScannerFiles/githubwhitelist.txt", item + "\n");
 	}
 
 }
@@ -202,8 +202,12 @@ async function addmodstowhitelist() {
 			addtowhitelist(item.path);
 		}
 	}
-	if (!fs.existsSync("./nexus_cache/manual.txt")) {
-		fs.writeFileSync("./nexus_cache/manual.txt", "");
+	if (!fs.existsSync("./ScannerFiles/manualwhitelist.txt")) {
+		fs.writeFileSync("./ScannerFiles/manualwhitelist.txt", "");
+	
+	}if (!fs.existsSync("./ScannerFiles/manualblacklist.txt")) {
+		fs.writeFileSync("./ScannerFiles/manualblacklist.txt", "");
+	
 	}
 }
 module.exports = { createWhitelist };

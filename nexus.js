@@ -9,17 +9,17 @@ try {
 }
 
 function cacheNexusFiles() {
-	if (!fs.existsSync("./nexus_cache/filecache.txt")) {
-		fs.writeFileSync("./nexus_cache/filecache.txt", "");
+	if (!fs.existsSync("./ScannerFiles/nexusmods.txt")) {
+		fs.writeFileSync("./ScannerFiles/nexusmods.txt", "");
 	}
 
 	function countFileLines(filePath) {
 		return fs.readFileSync(filePath).toString().split("\n").length;
 	}
 
-	//console.log("File Lines: " + countFileLines("./nexus_cache/filecache.txt"));
+	//console.log("File Lines: " + countFileLines("./ScannerFiles/nexusmods.txt"));
 
-	for (let i = countFileLines("./nexus_cache/filecache.txt"); ; i++) {
+	for (let i = countFileLines("./ScannerFiles/nexusmods.txt"); ; i++) {
 		console.log(
 			"Fetching page " +
 				`https://api.nexusmods.com/v1/games/bloonstd6/mods/${i}/files.json` +
@@ -43,7 +43,7 @@ function cacheNexusFiles() {
 			break;
 		}
 		if (response.status == 403) {
-			fs.appendFileSync(`./nexus_cache/filecache.txt`, "\n");
+			fs.appendFileSync(`./ScannerFiles/nexusmods.txt`, "\n");
 		}
 		if (response.status == 200) {
 			const json = JSON.parse(JSON.stringify(response.json()));
@@ -60,28 +60,29 @@ function cacheNexusFiles() {
 
 			function myFunction(item, index, arr) {
 				fs.appendFileSync(
-					`./nexus_cache/filecache.txt`,
+					`./ScannerFiles/nexusmods.txt`,
 					arr[index].path
 				);
 				//console.log(arr[index].path);
 			}
 
-			fs.appendFileSync(`./nexus_cache/filecache.txt`, "\n");
+			fs.appendFileSync(`./ScannerFiles/nexusmods.txt`, "\n");
 		}
 	}
 }
 
 function nexusList(mods) {
-	let text = fs.readFileSync("./nexus_cache/filecache.txt", "utf-8");
-	let whitelist = fs.readFileSync("./nexus_cache/whitelist.txt", "utf-8");
-	let manuallist = fs.readFileSync("./nexus_cache/manualwhitelist.txt", "utf-8");
+	let text = fs.readFileSync("./ScannerFiles/nexusmods.txt", "utf-8");
+	let whitelist = fs.readFileSync("./ScannerFiles/githubwhitelist.txt", "utf-8");
+	let manualwhitelist = fs.readFileSync("./ScannerFiles/manualwhitelist.txt", "utf-8");
+	let manualblacklist = fs.readFileSync("./ScannerFiles/manualblacklist.txt", "utf-8");
 	let badmods = [];
 
 	for (let element of mods) {
 		let element1 = element.replace(/ \(\d\)/, "");
 		//console.log(!whitelist.includes(element1));
 
-		if (text.includes(element1) && !whitelist.includes(element1) && !manuallist.includes(element1)) {
+		if ((text.includes(element1) && !whitelist.includes(element1) && !manualwhitelist.includes(element1)) || manualblacklist.includes(element1)) {
 			badmods.push(element);
 		}
 	}
@@ -89,7 +90,7 @@ function nexusList(mods) {
 }
 
 function isInModCache(item) {
-	let text = fs.readFileSync("./nexus_cache/filecache.txt", "utf-8");
+	let text = fs.readFileSync("./ScannerFiles/nexusmods.txt", "utf-8");
 	let textByLine = text.split("\n");
 	let result = false;
 	if (textByLine.includes(item)) {

@@ -33,3 +33,5 @@ Helpful.Additions.dll
 MusicMonkey.dll
 DiscordPeople.dll
 RaceButton.dll
+zeus.dll
+BloonsTD6 Mod Helper.dll

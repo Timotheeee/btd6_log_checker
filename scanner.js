@@ -1,7 +1,7 @@
 const fs = require("fs");
 const nexus = require("./nexus.js");
 function hasNumber(myString) {
-  return /\(\d\)/.test(myString);
+  return /\(\d+\)/.test(myString);
 }
 function scanLog(log, net6) {
   let body = log;
@@ -85,10 +85,10 @@ function parseMods(log, net6) {
 function getbrokenMods(mods) {
 
   let brokenMods = [];
-    if (!fs.existsSync("./nexus_cache/broken.txt")) {
-      fs.writeFileSync("./nexus_cache/broken.txt", "");
+    if (!fs.existsSync("./ScannerFiles/broken.txt")) {
+      fs.writeFileSync("./ScannerFiles/broken.txt", "");
     }
-    let broken = fs.readFileSync("./nexus_cache/broken.txt", "utf-8");
+    let broken = fs.readFileSync("./ScannerFiles/broken.txt", "utf-8");
 
     let brokenByLine = broken.split("\r\n");
     mods.forEach((l) => {
