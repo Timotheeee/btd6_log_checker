@@ -163,16 +163,16 @@ async function createWhitelist() {
 		`https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/modders.json`
 	).json();
 	
-	await btd6mod(btd6modders);
-	await btd6mods(btd6modders);
+	//await btd6mod(btd6modders);
+	//await btd6mods(btd6modders);
 
-	await addmodstowhitelist();
-	fs.writeFileSync("./ScannerFiles/githubwhitelist.txt", "");
+	//await addmodstowhitelist();
+	//fs.writeFileSync("./ScannerFiles/githubwhitelist.txt", "");
 
 
-	for (let item of dlls) {
-		fs.appendFileSync("./ScannerFiles/githubwhitelist.txt", item + "\n");
-	}
+	//for (let item of dlls) {
+	//	fs.appendFileSync("./ScannerFiles/githubwhitelist.txt", item + "\n");
+	//}
 
 }
 async function addmodstowhitelist() {
@@ -205,7 +205,8 @@ async function addmodstowhitelist() {
 	if (!fs.existsSync("./ScannerFiles/manualwhitelist.txt")) {
 		fs.writeFileSync("./ScannerFiles/manualwhitelist.txt", "");
 	
-	}if (!fs.existsSync("./ScannerFiles/manualblacklist.txt")) {
+	}
+	if (!fs.existsSync("./ScannerFiles/manualblacklist.txt")) {
 		fs.writeFileSync("./ScannerFiles/manualblacklist.txt", "");
 	
 	}

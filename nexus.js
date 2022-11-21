@@ -76,17 +76,17 @@ function nexusList(mods) {
 	let whitelist = fs.readFileSync("./ScannerFiles/githubwhitelist.txt", "utf-8");
 	let manualwhitelist = fs.readFileSync("./ScannerFiles/manualwhitelist.txt", "utf-8");
 	let manualblacklist = fs.readFileSync("./ScannerFiles/manualblacklist.txt", "utf-8");
-	let badmods = [];
+	let nexusMods = [];
 
 	for (let element of mods) {
 		let element1 = element.replace(/ \(\d\)/, "");
 		//console.log(!whitelist.includes(element1));
 
 		if ((text.includes(element1) && !whitelist.includes(element1) && !manualwhitelist.includes(element1)) || manualblacklist.includes(element1)) {
-			badmods.push(element);
+			nexusMods.push(element);
 		}
 	}
-	return badmods;
+	return nexusMods;
 }
 
 function isInModCache(item) {

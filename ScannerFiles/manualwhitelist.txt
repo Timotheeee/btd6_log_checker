@@ -35,3 +35,5 @@ DiscordPeople.dll
 RaceButton.dll
 zeus.dll
 BloonsTD6 Mod Helper.dll
+Gurren Core.dll
+
