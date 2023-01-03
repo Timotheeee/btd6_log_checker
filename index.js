@@ -38,7 +38,7 @@ for (const file of eventFiles) {
 const nexus = require("./nexus.js");
 const github = require("./github.js");
 
-nexus.cacheNexusFiles();
+//nexus.cacheNexusFiles();
 
 //client.on('debug', console.log);
 
@@ -47,9 +47,9 @@ async function Start() {
 		console.log("client.login succeeded");
 	});
 
-	github.createWhitelist().then((whitelist) => {
+	/*github.createWhitelist().then((whitelist) => {
 		console.log("Successfully created whitelist!");
-	});
+	});*/
   
 }
 

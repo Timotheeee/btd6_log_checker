@@ -79,9 +79,8 @@ function nexusList(mods) {
 	let nexusMods = [];
 
 	for (let element of mods) {
-		let element1 = element.replace(/ \(\d\)/, "");
-		//console.log(!whitelist.includes(element1));
-
+		let element1 = element.replace(/ \(\d+\)/, "");
+		
 		if ((text.includes(element1) && !whitelist.includes(element1) && !manualwhitelist.includes(element1)) || manualblacklist.includes(element1)) {
 			nexusMods.push(element);
 		}

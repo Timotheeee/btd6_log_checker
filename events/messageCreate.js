@@ -3,26 +3,26 @@ const fetch = require("sync-fetch");
 const scanner = require("../scanner.js");
 const nexus = require("../nexus.js");
 
-function createEmbed(log, net6) {
-	const mods = scanner.parseMods(log, net6);
-	//console.log("mods: "+mods);
+function createEmbed(log, name) {
+	const mods = scanner.parseMods(log);
+	const versionMods = scanner.parseModInfoString(log);
 	const nexusMods = nexus.nexusList(mods);
 	const errormods = scanner.parseErrors(log);
 
-	const exampleEmbed = {
+	const messageResults = {
 		color: 0x00ff00,
 		title: "Log Results: ",
 		description:
-			"*DM @GrahamKracker#6379 with your log if there are any false detections, as this bot is still in alpha.*",
+			"*Contact @GrahamKracker#6379, if there are any false detections.*",
 		thumbnail: {
 			url: "https://images-ext-2.discordapp.net/external/r2THoHnoRQQN2p6N9vnpTK29tMIbt0bPMHBG4Mkd3kE/https/i.imgur.com/BSXtkvW.png?width=1049&height=617",
 		},
 		fields: [],
 		timestamp: new Date().toISOString(),
-		footer: { text: "Created by GrahamKracker#6379 and Timotheeee1#1337" },
+		footer: { text: "Created by GrahamKracker#6379 and Timotheeee1#1337 | "+mods.length+" mods detected" },
 	};
 	if (nexusMods.length > 0) {
-		exampleEmbed.fields.push({
+		messageResults.fields.push({
 			name: "Nexus Mods: ", //__
 			value:
 				"\n- " +
@@ -31,7 +31,7 @@ function createEmbed(log, net6) {
 		});
 	}
 	if (errormods.length > 0) {
-		exampleEmbed.fields.push({
+		messageResults.fields.push({
 			name: "Mods With Errors: ",
 			value:
 				"\n- " +
@@ -39,27 +39,33 @@ function createEmbed(log, net6) {
 				"\n***Make sure you are using the newest version. Usually you can find the newest version on the mod browser or in one of the modding servers. After you have downloaded the newest version, if it still errors, remove it.***",
 		});
 	}
-	const miscErrors = scanner.parseMisc(log, net6);
-	if (miscErrors != "") {
-		exampleEmbed.fields.push({
-			name: "Misc Errors: ",
-			value: miscErrors,
+	const Errors = scanner.parseMisc(log, name);
+	if (Errors != "") {
+		messageResults.fields.push({
+			name: "Errors: ",
+			value: Errors,
 		});
 	}
-	const suggestions = scanner.parseSuggestions(log, net6);
+	const suggestions = scanner.parseSuggestions(log);
 	if (suggestions != "") {
-		exampleEmbed.fields.push({
+		messageResults.fields.push({
 			name: "Suggestions: ",
 			value: suggestions,
 		});
 	}
-	//colors
-	if (nexusMods.length > 0 || errormods.length > 0 || miscErrors != "") {
-		exampleEmbed.color = 0xff0000;
+	if (nexusMods.length > 0 || errormods.length > 0 || Errors != "") {
+		messageResults.color = 0xff0000;
 	} else if (suggestions != "") {
-		exampleEmbed.color = 0xffff00;
+		messageResults.color = 0xffff00;
 	}
-	return exampleEmbed;
+	messageResults.fields.push({
+		name: "Mods: ",
+		value:
+			"\|\|- " +
+			versionMods.join("\n- ") +
+			"\|\|",
+	});
+	return messageResults;
 }
 
 module.exports = {
@@ -71,32 +77,32 @@ module.exports = {
 		if (!attachment) return;
 		const file = attachment?.url;
 
-		let response;
-
 		// fetch the file from the external URL
-		response = fetch(file);
+		let response = fetch(file);
 
 		// take the response stream and read it to completion
 		const text = await response.text();
 
 		if (text && scanner.isLog(text)) {
-			const result = createEmbed(text, scanner.isNet6(text));
+			const result = createEmbed(
+				text,
+				attachment.name != "Latest.log"
+			);
 			let date = new Date(Date.now()).toLocaleString();
 			if (result.fields.length > 0) {
-				//message.reply({ content: result });
 				message.reply({
 					embeds: [result],
 				});
-
 				console.log(
-					`Returned Scanned Results at ${date} in channel: ${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
+					`Returned issues for log: ${attachment.name}, sent at ${date} in channel: #${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
 				);
 			} else {
 				message.reply({
-					content: "No issues found in log",
+					content:
+						"No issues found in log, contact GrahamKracker#6379 if you think this is a mistake.",
 				});
 				console.log(
-					`Detected log sent at ${date} in channel: ${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
+					`No issues for log: ${attachment.name}, sent at ${date} in channel: #${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
 				);
 			}
 		}
