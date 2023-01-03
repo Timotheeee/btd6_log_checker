@@ -92,6 +92,10 @@ function parseMisc(log, name) {
 		resp +=
 		"- Open the \"Change Proxy Settings\" settings window and disable all three toggles.\n";
 	}
+	if (body.includes("il2cpp_init detour failed")) {
+	resp +=
+		"- Install [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.12-windows-x64-installer).\n";
+	}
 	let textByLine = log.split("\n");
 	let respondedmods = [];
 	for (const element of textByLine) {

@@ -72,7 +72,6 @@ module.exports = {
 	name: Events.MessageCreate,
 	async execute(message) {
 		if (message.author.bot) return;
-
 		const attachment = message.attachments.first();
 		if (!attachment) return;
 		const file = attachment?.url;
