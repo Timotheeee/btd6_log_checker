@@ -58,13 +58,15 @@ function createEmbed(log, name) {
 	} else if (suggestions != "") {
 		messageResults.color = 0xffff00;
 	}
-	messageResults.fields.push({
+	if (versionMods.length > 0)
+	{
+		messageResults.fields.push({
 		name: "Mods: ",
 		value:
-			"\|\|- " +
-			versionMods.join("\n- ") +
-			"\|\|",
+			"- " +
+			versionMods.join("\n- "),
 	});
+	}
 	return messageResults;
 }
 
