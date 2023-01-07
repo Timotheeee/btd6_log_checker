@@ -13,7 +13,7 @@ function createEmbed(log, islatestlog) {
 		color: 0x00ff00,
 		title: "Log Results: ",
 		description:
-			"*Contact @GrahamKracker#6379, if there are any false detections.*",
+			"Contact GrahamKracker#6379, if there are any false detections.",
 		thumbnail: {
 			url: "https://images-ext-2.discordapp.net/external/r2THoHnoRQQN2p6N9vnpTK29tMIbt0bPMHBG4Mkd3kE/https/i.imgur.com/BSXtkvW.png?width=1049&height=617",
 		},
@@ -61,10 +61,16 @@ function createEmbed(log, islatestlog) {
 	}
 	if (/*nexusMods.length > 0 ||*/ errormods.length > 0 || Errors != "") {
 		messageResults.color = 0xff0000;
-
+		messageResults.description += "\n***Major issues found, please fix them.***"
 	} else if (suggestions != "") {
 		messageResults.color = 0xffff00;
+		messageResults.description += "\n**No major issues found, but there are some suggestions.**"
 	}
+	else
+	{
+		messageResults.description += "\n*No issues found.*"
+	}
+
 	if (versionMods.length > 0)
 	{
 		messageResults.fields.push({
