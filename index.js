@@ -35,8 +35,8 @@ for (const file of eventFiles) {
 	}
 }
 
-const nexus = require("./nexus.js");
-const github = require("./github.js");
+//const nexus = require("./nexus.js");
+//const github = require("./github.js");
 
 //nexus.cacheNexusFiles();
 

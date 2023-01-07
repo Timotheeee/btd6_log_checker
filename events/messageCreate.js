@@ -3,7 +3,7 @@ const fetch = require("sync-fetch");
 const scanner = require("../scanner.js");
 const nexus = require("../nexus.js");
 
-function createEmbed(log, name) {
+function createEmbed(log, islatestlog) {
 	const mods = scanner.parseMods(log);
 	const versionMods = scanner.parseModInfoString(log);
 	const nexusMods = nexus.nexusList(mods);
@@ -21,7 +21,7 @@ function createEmbed(log, name) {
 		timestamp: new Date().toISOString(),
 		footer: { text: "Created by GrahamKracker#6379 and Timotheeee1#1337 | "+mods.length+" mods detected" },
 	};
-	if (nexusMods.length > 0) {
+	/*if (nexusMods.length > 0) {
 		messageResults.fields.push({
 			name: "Nexus Mods: ", //__
 			value:
@@ -29,8 +29,19 @@ function createEmbed(log, name) {
 				nexusMods.join("\n- ") +
 				"\n***Do not get mods from Nexus. Most of the mods there are outdated/broken/stolen. Remove those mods and try again. ***",
 		});
+	}*/
+	let Errors = scanner.parseMisc(log);
+	if (!islatestlog) {
+		Errors +="- Make sure you are sending the latest log, it can be found within the MelonLoader folder, which is in the BTD6 folder, as a file named `Latest.log`. You can find out more information by typing `!log`.\n";
 	}
-	if (errormods.length > 0) {
+		if (Errors != "") {
+		messageResults.fields.push({
+			name: "Errors: ",
+			value: Errors,
+		});
+	}
+
+	if (errormods.length > 0 && !Errors.includes("- ***You need MelonLoader v0.6.0, you need to install following the guide [here](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first)***\n")) {
 		messageResults.fields.push({
 			name: "Mods With Errors: ",
 			value:
@@ -39,13 +50,8 @@ function createEmbed(log, name) {
 				"\n***Make sure you are using the newest version. Usually you can find the newest version on the mod browser or in one of the modding servers. After you have downloaded the newest version, if it still errors, remove it.***",
 		});
 	}
-	const Errors = scanner.parseMisc(log, name);
-	if (Errors != "") {
-		messageResults.fields.push({
-			name: "Errors: ",
-			value: Errors,
-		});
-	}
+	
+
 	const suggestions = scanner.parseSuggestions(log);
 	if (suggestions != "") {
 		messageResults.fields.push({
@@ -53,8 +59,9 @@ function createEmbed(log, name) {
 			value: suggestions,
 		});
 	}
-	if (nexusMods.length > 0 || errormods.length > 0 || Errors != "") {
+	if (/*nexusMods.length > 0 ||*/ errormods.length > 0 || Errors != "") {
 		messageResults.color = 0xff0000;
+
 	} else if (suggestions != "") {
 		messageResults.color = 0xffff00;
 	}
@@ -87,7 +94,7 @@ module.exports = {
 		if (text && scanner.isLog(text)) {
 			const result = createEmbed(
 				text,
-				attachment.name != "Latest.log"
+				attachment.name == "Latest.log"
 			);
 			let date = new Date(Date.now()).toLocaleString();
 			if (result.fields.length > 0) {
