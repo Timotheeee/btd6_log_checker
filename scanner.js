@@ -6,7 +6,11 @@ function hasNumber(myString) {
 function parseMisc(log) {
 	let body = log;
 	let resp = "";
-	if (body.includes("MelonLoader v0.5.4") || body.includes("MelonLoader v0.5.5") || body.includes("MelonLoader v0.5.7")) {
+	if (
+		body.includes("MelonLoader v0.5.4") ||
+		body.includes("MelonLoader v0.5.5") ||
+		body.includes("MelonLoader v0.5.7")
+	) {
 		return "- ***You need MelonLoader v0.6.0, you need to install following the guide [here](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first)***\n\n";
 	}
 	if (body.includes("BloonsTD6 Mod Helper v2.3.1")) {
@@ -43,7 +47,7 @@ function parseMisc(log) {
 	if (body.includes("MainMenu_OnEnable::Postfix()")) {
 		resp += "- Gurren's old mods are broken\n";
 	}
-	
+
 	if (body.includes("NKHook6")) {
 		resp += "- NKHook6 and all the mods that rely on it are broken\n";
 	}
@@ -54,8 +58,11 @@ function parseMisc(log) {
 		resp +=
 			"- A custom tower/paragon mod failed to load, it's probably broken/outdated.\n";
 	}
-	if (body.includes("inject the same type twice, or use a different namespace"))
-	{
+	if (
+		body.includes(
+			"inject the same type twice, or use a different namespace"
+		)
+	) {
 		resp +=
 			"- 2 mods are conflicting with each other because they use the same namespace. (this is a common problem with DatJaneDoe's old mods)\n";
 	}
@@ -77,37 +84,57 @@ function parseMisc(log) {
 		!body.includes("[Il2CppAssemblyGenerator] Moving NinjaKiwi.CT.API.dll")
 	) {
 		resp +=
-		"- Reinstall MelonLoader using the [guide](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first).\n";
-	}
-	if (body.includes("[ERROR] System.ComponentModel.Win32Exception")) {
-		resp += 
 			"- Reinstall MelonLoader using the [guide](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first).\n";
 	}
-	if (body.includes("Failed to Download UnityDependencies!") || body.includes(" System.Net.Sockets.SocketException")) {
+	if (body.includes("[ERROR] System.ComponentModel.Win32Exception")) {
 		resp +=
-		"- Open the \"Change Proxy Settings\" settings window and disable all three toggles.\n";
+			"- Reinstall MelonLoader using the [guide](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first).\n";
+	}
+	if (
+		body.includes("[INTERNAL FAILURE] Failed to Process UnityDependencies!")
+	) {
+		resp +=
+			"- Reinstall MelonLoader using the [guide](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first).\n";
+	}
+	if (
+		body.includes("Failed to Download UnityDependencies!") ||
+		body.includes(" System.Net.Sockets.SocketException")
+	) {
+		resp +=
+			'- Open the "Change Proxy Settings" settings window and disable all three toggles.\n';
 	}
 	if (body.includes("il2cpp_init detour failed")) {
-	resp +=
-		"- Install [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.12-windows-x64-installer).\n";
+		resp +=
+			"- Install [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.12-windows-x64-installer).\n";
 	}
 	let textByLine = log.split("\n");
 	let respondedmods = [];
 	for (const element of textByLine) {
 		let line = element;
 		if (/Failed to load all types in assembly (.*?)/.test(line)) {
-			let assembly = /Failed to load all types in assembly (.*?), /.exec(line)[1];
-			if (!respondedmods.includes(assembly))
-			{
-				resp += "- `" + assembly +"` is outdated and will not work. Check mod browser or the modding servers for a new version."+ "\n";
+			let assembly = /Failed to load all types in assembly (.*?), /.exec(
+				line
+			)[1];
+			if (!respondedmods.includes(assembly)) {
+				resp +=
+					"- `" +
+					assembly +
+					"` is outdated and will not work. Check mod browser or the modding servers for a new version." +
+					"\n";
 				respondedmods.push(assembly);
 			}
 		}
-		if (/- \'.*?\' is missing the following dependencies:/.test(line)){
-			let assembly = /- \'(.*?)\' is missing the following dependencies:/.exec(line)[1];
-			if (!respondedmods.includes(assembly))
-			{
-				resp += "- `" + assembly +"` is outdated and will not work. Check mod browser or the modding servers for a new version."+ "\n";
+		if (/- \'.*?\' is missing the following dependencies:/.test(line)) {
+			let assembly =
+				/- \'(.*?)\' is missing the following dependencies:/.exec(
+					line
+				)[1];
+			if (!respondedmods.includes(assembly)) {
+				resp +=
+					"- `" +
+					assembly +
+					"` is outdated and will not work. Check mod browser or the modding servers for a new version." +
+					"\n";
 				respondedmods.push(assembly);
 			}
 		}
@@ -139,8 +166,7 @@ function parseModInfo(log) {
 			versionRegex.test(textByLine[i]) &&
 			authorRegex.test(textByLine[i + 1]) &&
 			dllRegex.test(textByLine[i + 2])
-		) 
-		{
+		) {
 			let version = versionRegex.exec(textByLine[i])[1];
 			let author = authorRegex.exec(textByLine[i + 1])[1];
 			let dll = dllRegex.exec(textByLine[i + 2])[1];
@@ -150,9 +176,11 @@ function parseModInfo(log) {
 	}
 	return mods;
 }
+
 function parseModInfoString(log) {
 	let textByLine = log.split("\n");
 	let mods = [];
+	let count = 0;
 	for (let i = 0; i < textByLine.length; i++) {
 		let versionRegex = / v(\d+\.\d+\.\d+)/;
 		let authorRegex = /.*? by (.*?)\r/;
@@ -161,12 +189,22 @@ function parseModInfoString(log) {
 			versionRegex.test(textByLine[i]) &&
 			authorRegex.test(textByLine[i + 1]) &&
 			dllRegex.test(textByLine[i + 2])
-		) 
-		{
+		) {
 			let version = versionRegex.exec(textByLine[i])[1];
 			let author = authorRegex.exec(textByLine[i + 1])[1];
 			let dll = dllRegex.exec(textByLine[i + 2])[1];
-			mods.push(dll + " v" + version + " by " + author);
+			if (!mods.includes(dll + " v" + version + " by " + author)) {
+				count += (dll + " v" + version + " by " + author).length 
+				
+				if (count < 850) {
+					mods.push(dll + " v" + version + " by " + author);
+				}
+				else
+				{
+					mods.push("Too many mods to list, please check the log.");
+					break;
+				}
+			}
 		}
 	}
 	return mods;

@@ -19,7 +19,12 @@ function createEmbed(log, islatestlog) {
 		},
 		fields: [],
 		timestamp: new Date().toISOString(),
-		footer: { text: "Created by GrahamKracker#6379 and Timotheeee1#1337 | "+mods.length+" mods detected" },
+		footer: {
+			text:
+				"Created by GrahamKracker#6379 and Timotheeee1#1337 | " +
+				mods.length +
+				" mods detected",
+		},
 	};
 	/*if (nexusMods.length > 0) {
 		messageResults.fields.push({
@@ -32,16 +37,22 @@ function createEmbed(log, islatestlog) {
 	}*/
 	let Errors = scanner.parseMisc(log);
 	if (!islatestlog) {
-		Errors +="- Make sure you are sending the latest log, it can be found within the MelonLoader folder, which is in the BTD6 folder, as a file named `Latest.log`. You can find out more information by typing `!log`.\n";
+		Errors +=
+			"- Make sure you are sending the latest log, it can be found within the MelonLoader folder, which is in the BTD6 folder, as a file named `Latest.log`. You can find out more information by typing `!log`.\n";
 	}
-		if (Errors != "") {
+	if (Errors != "") {
 		messageResults.fields.push({
 			name: "Errors: ",
 			value: Errors,
 		});
 	}
 
-	if (errormods.length > 0 && !Errors.includes("- ***You need MelonLoader v0.6.0, you need to install following the guide [here](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first)***\n")) {
+	if (
+		errormods.length > 0 &&
+		!Errors.includes(
+			"- ***You need MelonLoader v0.6.0, you need to install following the guide [here](https://hemisemidemipresent.github.io/btd6-modding-tutorial/). (Make sure to delete the existing Melonloader files first)***\n"
+		)
+	) {
 		messageResults.fields.push({
 			name: "Mods With Errors: ",
 			value:
@@ -50,7 +61,6 @@ function createEmbed(log, islatestlog) {
 				"\n***Make sure you are using the newest version. Usually you can find the newest version on the mod browser or in one of the modding servers. After you have downloaded the newest version, if it still errors, remove it.***",
 		});
 	}
-	
 
 	const suggestions = scanner.parseSuggestions(log);
 	if (suggestions != "") {
@@ -61,25 +71,33 @@ function createEmbed(log, islatestlog) {
 	}
 	if (/*nexusMods.length > 0 ||*/ errormods.length > 0 || Errors != "") {
 		messageResults.color = 0xff0000;
-		messageResults.description += "\n***Major issues found, please fix them.***"
+		messageResults.description +=
+			"\n***Major issues found, please fix them.***";
 	} else if (suggestions != "") {
 		messageResults.color = 0xffff00;
-		messageResults.description += "\n**No major issues found, but there are some suggestions.**"
-	}
-	else
-	{
-		messageResults.description += "\n*No issues found.*"
+		messageResults.description +=
+			"\n**No major issues found, but there are some suggestions.**";
+	} else {
+		messageResults.description += "\n*No issues found.*";
 	}
 
-	if (versionMods.length > 0)
-	{
+	if (versionMods.length > 0) {
 		messageResults.fields.push({
-		name: "Mods: ",
-		value:
-			"- " +
-			versionMods.join("\n- "),
-	});
+			name: "Mods: ",
+			value: "- " + versionMods.join("\n- "),
+		});
+	} else if (mods.length > 0) {
+		messageResults.fields.push({
+			name: "Mods: ",
+			value: "- " + mods.join("\n- "),
+		});
+	} else {
+		messageResults.fields.push({
+			name: "Mods: ",
+			value: "No mods detected.",
+		});
 	}
+
 	return messageResults;
 }
 
@@ -98,10 +116,7 @@ module.exports = {
 		const text = await response.text();
 
 		if (text && scanner.isLog(text)) {
-			const result = createEmbed(
-				text,
-				attachment.name == "Latest.log"
-			);
+			const result = createEmbed(text, attachment.name == "Latest.log");
 			let date = new Date(Date.now()).toLocaleString();
 			if (result.fields.length > 0) {
 				message.reply({
@@ -113,10 +128,10 @@ module.exports = {
 			} else {
 				message.reply({
 					content:
-						"No issues found in log, contact GrahamKracker#6379 if you think this is a mistake.",
+						"Nothing found in log, this is most likely a mistake within the bot, contact GrahamKracker#6379.",
 				});
 				console.log(
-					`No issues for log: ${attachment.name}, sent at ${date} in channel: #${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
+					`Nothing for log: ${attachment.name}, sent at ${date} in channel: #${message.channel.name} in server: ${message.guild.name} from ${message.author.username}#${message.author.discriminator}`
 				);
 			}
 		}
